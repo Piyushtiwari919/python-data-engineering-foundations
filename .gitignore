@@ -8,3 +8,4 @@ wheels/
 
 # Virtual environments
 .venv
+pandas_basics/datasets/results.csv
