@@ -29,24 +29,34 @@ house_data_dict = {
 
 def main() -> None:
 
-    # Conversion to Pyarrow for efficient data_handling
-
     df_using_dict = pd.DataFrame(house_data_dict)
 
-    df_arrow_housing_data = df_using_dict.convert_dtypes(dtype_backend="pyarrow")
+    ## Slow -> Using Iterrows :-]
+    
+    cleaned_prices = []
 
+    for index, row in df_using_dict.iterrows():
+        clean_val = float(str(row["Raw_Price"]).replace("$", ""))
+        cleaned_prices.append(clean_val)
+
+    # Putting column to the dataframe
+    # df_using_dict["clean_Price_USD"] = cleaned_prices
+
+    ## Fast -> Using Vectorized String Operations
+
+    df_arrow_housing_data = df_using_dict.convert_dtypes(dtype_backend="pyarrow")
     print(df_arrow_housing_data.dtypes)
 
     # Price Cleanup (Vectorized String Operations with typecasting)
-    clean_Price_USD = (
+    df_arrow_housing_data["clean_Price_USD"] = (
         df_arrow_housing_data["Raw_Price"].str.replace("$", "").astype(float)
     )
 
-    # Printing Converted column
-    print(clean_Price_USD)
+    # Printing Converted data
+    print(df_arrow_housing_data)
 
     # Checking the data type
-    print(clean_Price_USD.dtypes)
+    print(df_arrow_housing_data["clean_Price_USD"].dtypes)
 
 
 if __name__ == "__main__":
